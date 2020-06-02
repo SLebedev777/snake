@@ -13,7 +13,10 @@ import os
 WIDTH, HEIGHT = 800, 600
 CELL_SIZE = 40
 SCREENRECT = pygame.Rect(0, 0, WIDTH, HEIGHT)
+GAMEGRIDRECT = pygame.Rect(40, 80, WIDTH-80, HEIGHT-120)
+MENURECT = pygame.Rect(80, 120, WIDTH-160, HEIGHT-200)
 FPS = 10
+FULLSCREEN_MODE = False
 
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
@@ -24,18 +27,11 @@ YELLOW = (255, 255, 0)
 GREY = (127, 127, 127)
 DARK_GREY = (63, 63, 63)
 
-PART_TYPES = {'head': GREEN,
-              'body': RED,
-              'tail': BLUE}
-
-FOOD_TYPES = {'banana': YELLOW}
-
-WALL_TYPES = {'stone': DARK_GREY}
 
 SNAKE_PART_WIDTH = CELL_SIZE
 SNAKE_PART_HEIGHT = CELL_SIZE
 
-SNAKE_CAN_MOVE_ALONE = False  # debug option: snake moves along prev direction if no input
+SNAKE_CAN_MOVE_ALONE = True  # debug option: snake moves along prev direction if no input
 
 MAIN_DIR = os.getcwd()
 DATA_DIR = f'{MAIN_DIR}/data'

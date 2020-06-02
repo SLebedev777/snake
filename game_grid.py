@@ -35,7 +35,9 @@ class GameGrid:
         return bcix, bciy
         
     def xy2cell(self, x, y):
-        # transform xy coordinates to cell indices
+        # transform absolute xy screen coordinates to cell indices
+        x -= self.rect.left
+        y -= self.rect.top
         dx = x % self.cell_size
         dy = y % self.cell_size
         cix = (x - dx) // self.cell_size
@@ -43,11 +45,12 @@ class GameGrid:
         cix, ciy = self.bound2rect(cix, ciy)
         return cix, ciy
     
-    def cell2xy(self, cix, ciy):
-        # transform cell indices to xy coordinates
-        cix, ciy = self.bound2rect(cix, ciy)
-        x = cix * self.cell_size
-        y = ciy * self.cell_size
+    def cell2xy(self, cix, ciy, bound=True):
+        # transform cell indices to absolute xy screen coordinates
+        if bound:
+            cix, ciy = self.bound2rect(cix, ciy)
+        x = cix * self.cell_size + self.rect.left
+        y = ciy * self.cell_size + self.rect.top
         return x, y
 
     def cell_occupied(self, cix, ciy):

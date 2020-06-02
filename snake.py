@@ -75,9 +75,9 @@ class Snake:
             head_shift_x += right * self.speed
             new_direction = right * glb.DIRECTION_RIGHT
         if new_direction != glb.DIRECTION_NONE:
-            # try to move the head and check if head goes outside the screen
+            # try to move the head and check if head goes outside the game world
             head_new_rect = self.head.rect.move(head_shift_x, head_shift_y)
-            if not glb.SCREENRECT.contains(head_new_rect):
+            if not glb.GAMEGRIDRECT.contains(head_new_rect):
                 self.within_world = False
                 return
 
@@ -136,7 +136,7 @@ class Snake:
 
         
     def update(self):
-        self.within_world = glb.SCREENRECT.contains(self.parts[0].rect)
+        self.within_world = glb.GAMEGRIDRECT.contains(self.parts[0].rect)
         self.check_intersect_itself()
         self.check_health()
         for part in self.parts:
