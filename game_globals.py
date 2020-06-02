@@ -18,6 +18,10 @@ MENURECT = pygame.Rect(80, 120, WIDTH-160, HEIGHT-200)
 FPS = 10
 FULLSCREEN_MODE = False
 
+# need this before loading any image (resources.py)
+pygame.init()
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
