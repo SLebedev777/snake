@@ -16,6 +16,7 @@ from group import Group
 import os, sys
 
 import game_scene as gs
+import resources as rsc
 
 class SplashScreenScene(Scene):
     caption = None
@@ -56,6 +57,12 @@ class YouLooseSplashScreenScene(SplashScreenScene):
              ScreenText('Нажмите Escape для выхода в Главное меню', 30, 150, glb.WHITE)
              ]
 
+    def enter(self):
+        rsc.snd_you_loose.play()
+
+    def leave(self):
+        rsc.snd_you_loose.stop()
+
     def handle_transitions(self):
         for event in pygame.event.get():
            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
@@ -71,5 +78,31 @@ class YouLooseSplashScreenScene(SplashScreenScene):
 class YouWinSplashScreenScene(SplashScreenScene):
     caption = ScreenText('ПОБЕДА!', 10, 50, glb.WHITE, 70)
     
+    def enter(self):
+        rsc.snd_you_win.play()
+
+    def leave(self):
+        rsc.snd_you_win.stop()
+
+class FinalSplashScreenScene(SplashScreenScene):
+    caption = ScreenText('ВСЯ ИГРА ПРОЙДЕНА!!!', 10, 50, glb.WHITE, 70)
+    texts = [ScreenText('Нажмите Escape для выхода в Главное меню', 30, 150, glb.WHITE)
+             ]
+
+    def enter(self):
+        rsc.snd_final_tune.play()
+
+    def leave(self):
+        rsc.snd_final_tune.stop()
+        
+    def handle_transitions(self):
+        for event in pygame.event.get():
+           if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+               # return to Main Menu. New Game can be started.
+               self.scene_manager.pop_scene()
+               gs.game_scene.destroy()
+               self.scene_manager.pop_scene()
+    
 you_loose_splash_screen = YouLooseSplashScreenScene(glb.MENURECT)
 you_win_splash_screen = YouWinSplashScreenScene(glb.MENURECT)
+final_splash_screen = FinalSplashScreenScene(glb.MENURECT)

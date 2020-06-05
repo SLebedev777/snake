@@ -21,6 +21,7 @@ class SceneManager:
         self.width = width
         self.height = height
         self.screen = pygame.display.set_mode((width, height))
+        self.toggle_fullscreen()
         self.rect = pygame.Rect(0, 0, width, height)
         self.fps = fps 
         self.clock = pygame.time.Clock()

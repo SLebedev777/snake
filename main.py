@@ -21,7 +21,8 @@ if __name__ == '__main__':
               difficulty_menu,
               game_scene,
               you_loose_splash_screen,
-              you_win_splash_screen
+              you_win_splash_screen,
+              final_splash_screen
               ]
     
     # create scene manager

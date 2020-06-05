@@ -33,11 +33,15 @@ def dir2img_template(image):
 
 
 # load images
+logo_image = load_image(f'{glb.DATA_DIR}/logo2.png', True)
+
 ground_image = load_image(f'{glb.DATA_DIR}/ground.png', False)
 banana_image = load_image(f'{glb.DATA_DIR}/banana.png', True)
 apple_image = load_image(f'{glb.DATA_DIR}/apple.png', True)
 mushroom_image = load_image(f'{glb.DATA_DIR}/mushroom.png', True)
 potion_image = load_image(f'{glb.DATA_DIR}/potion.png', True)
+ananas_image = load_image(f'{glb.DATA_DIR}/ananas.png', True)
+
 
 wall_image = load_image(f'{glb.DATA_DIR}/wall.png', True)
 
@@ -75,3 +79,14 @@ dir2img_body[(glb.DIRECTION_DOWN, glb.DIRECTION_RIGHT)] = pygame.transform.flip(
     body_curve_180, True, False)     
 dir2img_body[(glb.DIRECTION_LEFT, glb.DIRECTION_DOWN)] = pygame.transform.flip(
     body_curve_270, False, True)  
+
+# load sounds
+snd_eat_good_food = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/eat_good_food.wav')
+snd_eat_bad_food = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/eat_bad_food.ogg')
+snd_eat_potion = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/eat_potion.ogg')
+snd_you_win = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/you_win.wav')
+snd_you_loose = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/you_loose.wav')
+snd_menu_blip = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/menu_blip.wav')
+snd_menu_enter = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/menu_enter.wav')
+snd_final_tune = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/final_tune.ogg')
+snd_clock_tick = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/tick.wav')

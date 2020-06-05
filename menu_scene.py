@@ -16,6 +16,7 @@ from group import Group
 import os, sys
 
 from game_scene import *
+from resources import *
 
 class MenuScene(Scene):
     caption = None
@@ -32,8 +33,8 @@ class MenuScene(Scene):
         self.selected_option = 0
         self.prev_option = -1
         self.move_up = 0
-        self.background.fill(glb.GREY)
-        #self.background.set_alpha(128)
+        self.background.fill(glb.NAVY)
+        #self.background.blit(logo_image, (50, 50))
         self.built = True
  
     def update(self):
@@ -72,6 +73,7 @@ class MainMenuScene(MenuScene):
     def handle_transitions(self):
         for event in pygame.event.get():
            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+               snd_menu_enter.play()
                if self.selected_option == 0:
                    if not difficulty_menu.built:
                        difficulty_menu.build()
@@ -96,6 +98,7 @@ class OptionsMenuScene(MenuScene):
     def handle_transitions(self):
         for event in pygame.event.get():
            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+               snd_menu_enter.play()
                if self.selected_option == 0:
                    glb.FULLSCREEN_MODE = not glb.FULLSCREEN_MODE 
                    self.scene_manager.toggle_fullscreen()
@@ -117,9 +120,11 @@ class DifficultyMenuScene(MenuScene):
     def handle_transitions(self):
         for event in pygame.event.get():
            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+               snd_menu_enter.play()
                # select difficilty and start new game from level 0
                if self.selected_option in [0, 1]:
                    glb.SNAKE_CAN_MOVE_ALONE = bool(self.selected_option)
+                   game_scene.destroy()
                    game_scene.build()
                    self.scene_manager.pop_scene()
                    self.scene_manager.push_scene(game_scene)

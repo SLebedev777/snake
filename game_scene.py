@@ -17,16 +17,26 @@ from screen_text import ScreenText
 from scene import Scene
 from scene_manager import SceneManager
 from group import Group
-from splash import you_loose_splash_screen, you_win_splash_screen
+from splash import you_loose_splash_screen, you_win_splash_screen, final_splash_screen
 
 from timer import RepeatedTimer
 
 # load once all images and sounds
 from resources import *
 
+from levels import *
 
-class GameScene(Scene):    
-    def build(self):        
+class GameScene(Scene):
+    def __init__(self, rect, levels):
+        super().__init__(rect)
+        self.levels = levels
+        self.curr_level_index = 0
+        self.num_levels = len(levels)
+        
+    def build(self, level=None):
+        level = self.levels[self.curr_level_index] if level is None else level
+        self.level_name = level['level_name']
+        
         self.grid = GameGrid(glb.GAMEGRIDRECT, glb.CELL_SIZE)
 
         # place head of the snake in the center and align to the grid    
@@ -55,14 +65,10 @@ class GameScene(Scene):
     
         # create some food
         self.food = Group()
-        food_table = {'apple':  {'image': apple_image, 'health': 1, 'proba': 0.4},
-                      'banana': {'image': banana_image, 'health': 1, 'proba': 0.4},
-                      'mushroom': {'image': mushroom_image, 'health': -50, 'proba': 0.15},
-                      'potion': {'image': potion_image, 'health': 50, 'proba': 0.05},
-                      }
+        food_table = level.get('food_table', default_food_table)
         self.food_factory = FoodFactory(food_table)
         
-        for _ in range(10):
+        for _ in range(level['num_starting_food']):
             fc = self.grid.get_random_free_cell()
             if fc:
                 food_x, food_y = self.grid.cell2xy(*fc)
@@ -71,7 +77,7 @@ class GameScene(Scene):
     
         # create some walls
         self.walls = Group()
-        for _ in range(5):
+        for _ in range(level['num_starting_walls']):
             fc = self.grid.get_random_free_cell()
             if fc:
                 wall_x, wall_y = self.grid.cell2xy(*fc)
@@ -79,7 +85,7 @@ class GameScene(Scene):
                 self.walls.append( Wall(wall_x, wall_y, wall_image) )
     
         self.score = 0
-        self.score_needed = 15
+        self.score_needed = level['score_needed']
                             
         # tile background with sand texture
         for cix in range(self.grid.n_cells_x):
@@ -99,17 +105,21 @@ class GameScene(Scene):
 
         # reset timer
         self.time_elapsed = 0
-        self.max_time = 0
+        self.max_time = level['max_time']
         if self.timer is not None and self.timer.is_running:
             self.timer.stop()
         self.timer = RepeatedTimer(1, self.increase_time, None)
+        
+        self.game_speed = level['game_speed']
 
         self.text_score = ScreenText(f'ОЧКОВ: {self.score} из {self.score_needed}', 
                                      10, 20, glb.WHITE)
         self.text_health = ScreenText(f'ЗДОРОВЬЕ: {self.snake.health}', 650, 20, glb.WHITE)        
         self.text_time = ScreenText(f'ВРЕМЯ: {self.time_elapsed} сек', glb.WIDTH//2, 20, glb.WHITE)        
+        self.text_level_name = ScreenText(f'{self.level_name}', glb.WIDTH//4, 20, glb.WHITE)
         self.texts =  Group([self.text_score, self.text_health, 
-                             self.text_time])
+                             self.text_time,
+                             self.text_level_name])
 
 
         self.built = True
@@ -117,6 +127,8 @@ class GameScene(Scene):
     def increase_time(self, *args, **kwargs):
         # TODO: VERY UGLY CODE!!
         self.time_elapsed += 1
+        if self.time_is_out(10): 
+            snd_clock_tick.play()
     
         
     def update(self):
@@ -141,8 +153,15 @@ class GameScene(Scene):
                 snake.add_part()
                 snake.parts[-2].dir2img_table = snake.neck.dir2img_table  # ugly code
 
+                if f.food_type == 'potion':
+                    snd_eat_potion.play()
+                elif f.food_type == 'mushroom':
+                    snd_eat_bad_food.play()
+                else:
+                    snd_eat_good_food.play()
+
                 if f.health > 0:
-                    self.score += 1
+                    self.score += f.score
                     
                 snake.health += f.health
                 
@@ -181,8 +200,8 @@ class GameScene(Scene):
         self.texts.draw(screen)
         pygame.display.update(dirtyrects)
 
-    def time_is_out(self):
-        return self.time_elapsed >= self.max_time if self.max_time else False
+    def time_is_out(self, delta=0):
+        return self.time_elapsed >= self.max_time - delta if self.max_time else False
         
     def handle_transitions(self):
         for event in pygame.event.get():
@@ -190,14 +209,16 @@ class GameScene(Scene):
                self.scene_manager.pop_scene()
                return
         if not self.snake.alive or self.time_is_out():
-            self.destroy()
             self.build()  # here we should rebuild current level
             self.scene_manager.push_scene(you_loose_splash_screen)
             return
         if self.score >= self.score_needed:
-            self.destroy()
-            self.build()  # here we should build next level
-            self.scene_manager.push_scene(you_win_splash_screen)
+            if self.curr_level_index < self.num_levels - 1:
+                self.curr_level_index += 1
+                self.build()  # here we should build next level
+                self.scene_manager.push_scene(you_win_splash_screen)
+            else:
+                self.scene_manager.push_scene(final_splash_screen)
 
 
     def handle_events(self):                
@@ -209,10 +230,15 @@ class GameScene(Scene):
     def enter(self):
         if self.timer is not None and not self.timer.is_running:
             self.timer.start()
+        self.scene_manager.fps = self.game_speed
 
     def leave(self):
         if self.timer is not None and self.timer.is_running:
             self.timer.stop()
+        self.scene_manager.fps = glb.FPS
 
+    def destroy(self):
+        self.curr_level_index = 0
+        self.built = False
 
-game_scene = GameScene(glb.SCREENRECT)
+game_scene = GameScene(glb.SCREENRECT, LEVELS)

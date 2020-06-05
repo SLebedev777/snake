@@ -22,6 +22,7 @@ FULLSCREEN_MODE = False
 pygame.init()
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 
+
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -30,6 +31,8 @@ WHITE = (255, 255, 255)
 YELLOW = (255, 255, 0)
 GREY = (127, 127, 127)
 DARK_GREY = (63, 63, 63)
+BROWN = (116, 71, 48)
+NAVY = (0, 64, 64)
 
 
 SNAKE_PART_WIDTH = CELL_SIZE

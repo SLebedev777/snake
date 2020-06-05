@@ -8,16 +8,18 @@ from actor import Actor
 from numpy import random
 
 class Food(Actor):
-    def __init__(self, x, y, image, health=5):
+    def __init__(self, x, y, image, food_type, health=5, score=1):
         super().__init__(x, y, image)
+        self.food_type = food_type
         self.health = health  # if health is negative, snake looses HP by eating this fruit
+        self.score = score
 
 
 class FoodFactory:
     """
     Produces various types of fruits, according to production table. 
     For example:
-        table = {'apple':  {'image': apple_image, 'health': 5, 'proba': 0.4},
+        table = {'apple':  {'image': apple_image, 'health': 5, 'proba': 0.4, 'score': 1},
                  'banana': {'image': banana_image, 'health': 5, 'proba': 0.4},
                  'mushroom': {'image': mushroom_image, 'health': -50, 'proba': 0.2}
                   }
@@ -40,8 +42,10 @@ class FoodFactory:
         if food_type not in self.table:
             raise ValueError(f"Trying to create unknown food with type: {food_type}")
         return Food(x, y, 
-                    self.table[food_type]['image'], 
-                    self.table[food_type]['health']
+                    self.table[food_type]['image'],
+                    food_type,
+                    self.table[food_type]['health'],
+                    self.table[food_type].get('score', 1)
                     )
 
     def make_random(self, x, y):
