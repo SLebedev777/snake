@@ -41,12 +41,11 @@ class SplashScreenScene(Scene):
         self.group.draw(screen)
         pygame.display.update(dirtyrects)
         
-    def handle_transitions(self):
-        for event in pygame.event.get():
-           if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-               self.scene_manager.pop_scene()
+    def handle_transitions(self, event):
+       if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+           self.scene_manager.pop_scene()
 
-    def handle_events(self):
+    def handle_events(self, event):
         pass
 
 
@@ -63,17 +62,16 @@ class YouLooseSplashScreenScene(SplashScreenScene):
     def leave(self):
         rsc.snd_you_loose.stop()
 
-    def handle_transitions(self):
-        for event in pygame.event.get():
-           if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-               # replay level
-               self.scene_manager.pop_scene()
-               return
-           if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-               # return to Main Menu. New Game can be started.
-               self.scene_manager.pop_scene()
-               gs.game_scene.destroy()
-               self.scene_manager.pop_scene()
+    def handle_transitions(self, event):
+       if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+           # replay level
+           self.scene_manager.pop_scene()
+           return
+       if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+           # return to Main Menu. New Game can be started.
+           self.scene_manager.pop_scene()
+           gs.game_scene.destroy()
+           self.scene_manager.pop_scene()
 
 class YouWinSplashScreenScene(SplashScreenScene):
     caption = ScreenText('ПОБЕДА!', 10, 50, glb.WHITE, 70)
@@ -95,13 +93,12 @@ class FinalSplashScreenScene(SplashScreenScene):
     def leave(self):
         rsc.snd_final_tune.stop()
         
-    def handle_transitions(self):
-        for event in pygame.event.get():
-           if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-               # return to Main Menu. New Game can be started.
-               self.scene_manager.pop_scene()
-               gs.game_scene.destroy()
-               self.scene_manager.pop_scene()
+    def handle_transitions(self, event):
+       if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+           # return to Main Menu. New Game can be started.
+           self.scene_manager.pop_scene()
+           gs.game_scene.destroy()
+           self.scene_manager.pop_scene()
     
 you_loose_splash_screen = YouLooseSplashScreenScene(glb.MENURECT)
 you_win_splash_screen = YouWinSplashScreenScene(glb.MENURECT)

@@ -53,15 +53,19 @@ class SceneManager:
     
     def main_loop(self):
         while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                self.active_scene.handle_events(event)
+                self.active_scene.handle_transitions(event)
+                
             self.screen.blit(self.active_scene.background, 
                              (self.active_scene.rect.left, self.active_scene.rect.top))
             self.active_scene.clear_screen(self.screen)
-            self.active_scene.handle_events()
             self.active_scene.update()
             self.active_scene.draw(self.screen)            
             pygame.display.flip()
             self.clock.tick(self.fps)
-            self.active_scene.handle_transitions()
         pygame.quit()
         sys.exit()            
 
@@ -72,7 +76,6 @@ class SceneManager:
         else:
             self.screen = pygame.display.set_mode((self.width, self.height))
 
-            
 
 class SceneManagerException(Exception): 
     pass

@@ -81,29 +81,28 @@ class Scene(abc.ABC):
     def draw(self, screen):
         pass
 
-    def handle_transitions(self):
+    def handle_transitions(self, event):
         """
         Must implement logic of transitions from this scene to some other scenes.     
         """
         pass
     
-    def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            # call submitted observers
-            elif event.type == pygame.KEYDOWN:
-                for handler in self.keydown_handlers[event.key]:
-                    handler(event.key)
-            elif event.type == pygame.KEYUP:
-                for handler in self.keydown_handlers[event.key]:
-                    handler(event.key)
-            elif event.type in (pygame.MOUSEBUTTONDOWN, 
-                                pygame.MOUSEBUTTONUP, 
-                                pygame.MOUSEMOTION):
-                for handler in self.mouse_handlers:
-                    handler(event.type, event.pos)
+    def handle_events(self, event):
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        # call submitted observers
+        elif event.type == pygame.KEYDOWN:
+            for handler in self.keydown_handlers[event.key]:
+                handler(event.key)
+        elif event.type == pygame.KEYUP:
+            for handler in self.keydown_handlers[event.key]:
+                handler(event.key)
+        elif event.type in (pygame.MOUSEBUTTONDOWN, 
+                            pygame.MOUSEBUTTONUP, 
+                            pygame.MOUSEMOTION):
+            for handler in self.mouse_handlers:
+                handler(event.type, event.pos)
 
     def enter(self):
         pass

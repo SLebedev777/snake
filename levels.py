@@ -23,7 +23,7 @@ default_level_settings = LevelSettings(
                  num_starting_walls=5,
                  score_needed=10,
                  max_time=120,
-                 game_speed=7)
+                 game_speed=8)
 
 level1 = default_level_settings
 level2 = LevelSettings(
@@ -34,7 +34,7 @@ level2 = LevelSettings(
                  num_starting_walls=6,
                  score_needed=15,
                  max_time=90,
-                 game_speed=8)
+                 game_speed=9)
 
 level3_food_table =  {'apple':  {'image': apple_image, 'health': 1, 'proba': 0.35},
                       'banana': {'image': banana_image, 'health': 1, 'proba': 0.35},

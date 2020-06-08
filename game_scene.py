@@ -121,7 +121,13 @@ class GameScene(Scene):
                              self.text_time,
                              self.text_level_name])
 
+        # reset user events
+        self.EVENT_PLAYER_LOOSE_LEVEL = pygame.USEREVENT + 1
+        self.EVENT_PLAYER_WIN_LEVEL = pygame.USEREVENT + 2
 
+        self.up = 0
+        self.right = 0
+        
         self.built = True
 
     def increase_time(self, *args, **kwargs):
@@ -175,6 +181,13 @@ class GameScene(Scene):
                     grid.occupy_cell(*fc)
                     food.append(self.food_factory.make_random(food_x, food_y))
 
+        if not self.snake.alive or self.time_is_out():
+            pygame.event.post(pygame.event.Event(self.EVENT_PLAYER_LOOSE_LEVEL))
+            return
+
+        if self.score >= self.score_needed:
+            pygame.event.post(pygame.event.Event(self.EVENT_PLAYER_WIN_LEVEL))
+
         snake.update()
 
         # update texts
@@ -201,18 +214,21 @@ class GameScene(Scene):
         pygame.display.update(dirtyrects)
 
     def time_is_out(self, delta=0):
-        return self.time_elapsed >= self.max_time - delta if self.max_time else False
+        if self.max_time <= 0:
+            return False
+        return self.time_elapsed >= self.max_time - delta
         
-    def handle_transitions(self):
-        for event in pygame.event.get():
-           if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-               self.scene_manager.pop_scene()
-               return
-        if not self.snake.alive or self.time_is_out():
+    def handle_transitions(self, event):
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            self.scene_manager.pop_scene()
+            return
+
+        if event.type == self.EVENT_PLAYER_LOOSE_LEVEL:
             self.build()  # here we should rebuild current level
             self.scene_manager.push_scene(you_loose_splash_screen)
             return
-        if self.score >= self.score_needed:
+        
+        if event.type == self.EVENT_PLAYER_WIN_LEVEL:
             if self.curr_level_index < self.num_levels - 1:
                 self.curr_level_index += 1
                 self.build()  # here we should build next level
@@ -221,7 +237,7 @@ class GameScene(Scene):
                 self.scene_manager.push_scene(final_splash_screen)
 
 
-    def handle_events(self):                
+    def handle_events(self, event):                
         keystate = pygame.key.get_pressed()                         
         # handle input
         self.up = keystate[pygame.K_UP] - keystate[pygame.K_DOWN]

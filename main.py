@@ -10,6 +10,7 @@ import game_globals as glb
 from scene_manager import SceneManager
 from menu_scene import *
 from game_scene import *
+
 from splash import *
 
 if __name__ == '__main__':
