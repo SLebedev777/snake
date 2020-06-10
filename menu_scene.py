@@ -44,6 +44,7 @@ class MenuScene(Scene):
             self.selected_option = min(self.num_options-1, max(0, self.selected_option))
             self.pointer.setpos(self.pointer.x, 
                                 self.options[0].y + self.font_size * self.selected_option)
+        pygame.time.wait(100)
 
     def clear_screen(self, screen):
         dirtyrects.clear()

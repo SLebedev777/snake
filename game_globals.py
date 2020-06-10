@@ -15,7 +15,7 @@ CELL_SIZE = 40
 SCREENRECT = pygame.Rect(0, 0, WIDTH, HEIGHT)
 GAMEGRIDRECT = pygame.Rect(40, 80, WIDTH-80, HEIGHT-120)
 MENURECT = pygame.Rect(80, 120, WIDTH-160, HEIGHT-200)
-FPS = 10
+FPS = 50
 FULLSCREEN_MODE = False
 
 # need this before loading any image (resources.py)
@@ -37,6 +37,12 @@ NAVY = (0, 64, 64)
 
 SNAKE_PART_WIDTH = CELL_SIZE
 SNAKE_PART_HEIGHT = CELL_SIZE
+
+SNAKE_SHIFT_COEFF = 0.7
+# for snake it's enough to move SNAKE_SHIFT_THRESHOLD_x * SNAKE_PART_x along axis,
+# to consider that snake arrived to the nearest grid cell
+SNAKE_SHIFT_THRESHOLD_X = SNAKE_PART_WIDTH * SNAKE_SHIFT_COEFF
+SNAKE_SHIFT_THRESHOLD_Y = SNAKE_PART_HEIGHT * SNAKE_SHIFT_COEFF
 
 SNAKE_CAN_MOVE_ALONE = True  # debug option: snake moves along prev direction if no input
 

@@ -57,7 +57,7 @@ class GameScene(Scene):
                          dir2img_tail)
         parts = [head, neck, body, tail]
         
-        self.snake = Snake(parts)
+        self.snake = Snake(parts, speed=level['game_speed'])
         self.group_snake = Group([self.snake])
 
         for part in self.snake.parts:
@@ -110,8 +110,7 @@ class GameScene(Scene):
             self.timer.stop()
         self.timer = RepeatedTimer(1, self.increase_time, None)
         
-        self.game_speed = level['game_speed']
-
+        # reset texts
         self.text_score = ScreenText(f'ОЧКОВ: {self.score} из {self.score_needed}', 
                                      10, 20, glb.WHITE)
         self.text_health = ScreenText(f'ЗДОРОВЬЕ: {self.snake.health}', 650, 20, glb.WHITE)        
@@ -246,12 +245,10 @@ class GameScene(Scene):
     def enter(self):
         if self.timer is not None and not self.timer.is_running:
             self.timer.start()
-        self.scene_manager.fps = self.game_speed
 
     def leave(self):
         if self.timer is not None and self.timer.is_running:
             self.timer.stop()
-        self.scene_manager.fps = glb.FPS
 
     def destroy(self):
         self.curr_level_index = 0

@@ -7,6 +7,7 @@ Created on Sat May 23 20:32:56 2020
 import game_globals as glb
 import copy
 from actor import Actor
+from numpy import sign
 
 class SnakePart(Actor):
     """
@@ -39,15 +40,16 @@ class Snake:
     """
     Player
     """
-    def __init__(self, parts, max_health=100):
+    def __init__(self, parts, speed=glb.SNAKE_PART_WIDTH, max_health=100):
         self.parts = parts
-        self.speed = glb.SNAKE_PART_WIDTH  # BAD PLACE HERE: SNAKE CAN MOVE ONLY AT 1 CELL
+        self.speed = speed
         self.within_world = True
         self.intersect_itself = False
         self.alive = True
         assert max_health > 0
         self.max_health = max_health
         self.health = max_health
+        self.vel = [0, 0]
 
     def move(self, up, right, walls=[]):
         head_shift_x, head_shift_y = 0, 0
@@ -64,31 +66,49 @@ class Snake:
             if self.direction == glb.DIRECTION_RIGHT:
                 right = 1
         
-        if up:
-            if self.head.direction == -up * glb.DIRECTION_UP:
+        if up != 0:
+            if self.head.direction == -sign(up) * glb.DIRECTION_UP:
                 return
             head_shift_y -= up * self.speed
-            new_direction = up * glb.DIRECTION_UP
-        elif right:
-            if self.head.direction == -right * glb.DIRECTION_RIGHT:
+            new_direction = sign(up) * glb.DIRECTION_UP
+        elif right != 0:
+            if self.head.direction == -sign(right) * glb.DIRECTION_RIGHT:
                 return
             head_shift_x += right * self.speed
-            new_direction = right * glb.DIRECTION_RIGHT
+            new_direction = sign(right) * glb.DIRECTION_RIGHT
         if new_direction != glb.DIRECTION_NONE:
             # try to move the head and check if head goes outside the game world
             head_new_rect = self.head.rect.move(head_shift_x, head_shift_y)
-            if not glb.GAMEGRIDRECT.contains(head_new_rect):
+            if not glb.GAMEGRIDRECT.inflate(2*self.speed, 2*self.speed).contains(head_new_rect):
                 self.within_world = False
+                self.vel = [0, 0]
                 return
 
             for w in walls:
                 if head_new_rect.colliderect(w.rect):
                     return
 
-            hpx, hpy = self.head.getpos()
-            head_new_x = hpx + head_shift_x
-            head_new_y = hpy + head_shift_y
+            self.vel[0] += head_shift_x
+            self.vel[1] += head_shift_y
             
+            hpx, hpy = self.head.getpos()
+            fin_shift_x = 0
+            fin_shift_y = 0
+            if self.vel[0] >= glb.SNAKE_SHIFT_THRESHOLD_X:
+                fin_shift_x = glb.SNAKE_PART_WIDTH
+            if self.vel[0] <= -glb.SNAKE_SHIFT_THRESHOLD_X:
+                fin_shift_x = -glb.SNAKE_PART_WIDTH
+            if self.vel[1] >= glb.SNAKE_SHIFT_THRESHOLD_Y:
+                fin_shift_y = glb.SNAKE_PART_HEIGHT
+            if self.vel[1] <= -glb.SNAKE_SHIFT_THRESHOLD_Y:
+                fin_shift_y = -glb.SNAKE_PART_HEIGHT
+
+            if fin_shift_x == 0 and fin_shift_y == 0:
+                return
+                
+            head_new_x = hpx + fin_shift_x
+            head_new_y = hpy + fin_shift_y
+                            
             # shift snake parts from tail to neck
             for i in range(len(self.parts)-1, 0, -1):
                 curr_part = self.parts[i]
@@ -113,6 +133,7 @@ class Snake:
             self.head.direction_from = new_direction
             self.head.update_image_by_direction()
             
+            self.vel = [0, 0]
 
     def erase(self, screen, background):
         for part in self.parts:
