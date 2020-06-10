@@ -66,16 +66,43 @@ class Snake:
             if self.direction == glb.DIRECTION_RIGHT:
                 right = 1
         
-        if up != 0:
+        # handle single arrow pressed
+        if up != 0 and right == 0:
             if self.head.direction == -sign(up) * glb.DIRECTION_UP:
                 return
             head_shift_y -= up * self.speed
             new_direction = sign(up) * glb.DIRECTION_UP
-        elif right != 0:
+        if right != 0 and up == 0:
             if self.head.direction == -sign(right) * glb.DIRECTION_RIGHT:
                 return
             head_shift_x += right * self.speed
             new_direction = sign(right) * glb.DIRECTION_RIGHT
+            
+        # handle combo when 2 arrows are pressed simultaneously
+        if up != 0 and right != 0:
+            if self.head.direction == sign(up) * glb.DIRECTION_UP:
+                up = 0
+                head_shift_x += right * self.speed
+                new_direction = sign(right) * glb.DIRECTION_RIGHT
+            elif self.head.direction == sign(right) * glb.DIRECTION_RIGHT:
+                right = 0
+                head_shift_y -= up * self.speed
+                new_direction = sign(up) * glb.DIRECTION_UP
+            elif self.head.direction == -sign(up) * glb.DIRECTION_UP:
+                self.move(0, right, walls)
+                up = -up
+                right = 0
+                head_shift_y -= up * self.speed
+                new_direction = sign(up) * glb.DIRECTION_UP
+            elif self.head.direction == -sign(right) * glb.DIRECTION_RIGHT:
+                self.move(up, 0, walls)
+                up = 0
+                right = -right
+                head_shift_x += right * self.speed
+                new_direction = sign(right) * glb.DIRECTION_RIGHT
+            else:
+                return
+            
         if new_direction != glb.DIRECTION_NONE:
             # try to move the head and check if head goes outside the game world
             head_new_rect = self.head.rect.move(head_shift_x, head_shift_y)
