@@ -38,7 +38,7 @@ NAVY = (0, 64, 64)
 SNAKE_PART_WIDTH = CELL_SIZE
 SNAKE_PART_HEIGHT = CELL_SIZE
 
-SNAKE_SHIFT_COEFF = 0.7
+SNAKE_SHIFT_COEFF = 0.55
 # for snake it's enough to move SNAKE_SHIFT_THRESHOLD_xxx pixels along axis,
 # to consider that snake arrived to the nearest grid cell
 SNAKE_SHIFT_THRESHOLD_X = SNAKE_PART_WIDTH * SNAKE_SHIFT_COEFF

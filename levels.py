@@ -23,7 +23,7 @@ default_level_settings = LevelSettings(
                  num_starting_walls=5,
                  score_needed=10,
                  max_time=120,
-                 game_speed=glb.CELL_SIZE / 10
+                 game_speed=glb.SNAKE_SHIFT_THRESHOLD_X / 7
                  )
 
 level1 = default_level_settings
@@ -35,7 +35,7 @@ level2 = LevelSettings(
                  num_starting_walls=6,
                  score_needed=15,
                  max_time=90,
-                 game_speed=glb.CELL_SIZE / 8
+                 game_speed=glb.SNAKE_SHIFT_THRESHOLD_X / 6
                  )
 
 level3_food_table =  {'apple':  {'image': apple_image, 'health': 1, 'proba': 0.35},
@@ -53,7 +53,7 @@ level3 = LevelSettings(
                  num_starting_walls=8,
                  score_needed=20,
                  max_time=60,
-                 game_speed=glb.CELL_SIZE / 7
+                 game_speed=glb.SNAKE_SHIFT_THRESHOLD_X / 5.5
                  )
 
 level4 = LevelSettings(
@@ -64,7 +64,7 @@ level4 = LevelSettings(
                  num_starting_walls=10,
                  score_needed=30,
                  max_time=60,
-                 game_speed=glb.CELL_SIZE / 6
+                 game_speed=glb.SNAKE_SHIFT_THRESHOLD_X / 5
                  )
 
 
