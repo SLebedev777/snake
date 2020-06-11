@@ -69,25 +69,25 @@ class Snake:
         # handle single arrow pressed
         if up != 0 and right == 0:
             if self.head.direction == -sign(up) * glb.DIRECTION_UP:
-                return
+                return False
             head_shift_y -= up * self.speed
             new_direction = sign(up) * glb.DIRECTION_UP
         if right != 0 and up == 0:
             if self.head.direction == -sign(right) * glb.DIRECTION_RIGHT:
-                return
+                return False
             head_shift_x += right * self.speed
             new_direction = sign(right) * glb.DIRECTION_RIGHT
             
         # handle combo when 2 arrows are pressed simultaneously
         if up != 0 and right != 0:
+            # cases when 1 arrow is the same as snake head direction
             if self.head.direction == sign(up) * glb.DIRECTION_UP:
-                up = 0
-                head_shift_x += right * self.speed
-                new_direction = sign(right) * glb.DIRECTION_RIGHT
+                if not self.move(0, right, walls):
+                    self.move(up, 0, walls)
             elif self.head.direction == sign(right) * glb.DIRECTION_RIGHT:
-                right = 0
-                head_shift_y -= up * self.speed
-                new_direction = sign(up) * glb.DIRECTION_UP
+                if not self.move(up, 0, walls):
+                    self.move(0, right, walls)            
+            # cases when 1 arrow is the opposite to snake head direction
             elif self.head.direction == -sign(up) * glb.DIRECTION_UP:
                 self.move(0, right, walls)
                 up = -up
@@ -101,7 +101,7 @@ class Snake:
                 head_shift_x += right * self.speed
                 new_direction = sign(right) * glb.DIRECTION_RIGHT
             else:
-                return
+                return False
             
         if new_direction != glb.DIRECTION_NONE:
             # try to move the head and check if head goes outside the game world
@@ -109,11 +109,11 @@ class Snake:
             if not glb.GAMEGRIDRECT.inflate(2*self.speed, 2*self.speed).contains(head_new_rect):
                 self.within_world = False
                 self.vel = [0, 0]
-                return
+                return False
 
             for w in walls:
                 if head_new_rect.colliderect(w.rect):
-                    return
+                    return False
 
             self.vel[0] += head_shift_x
             self.vel[1] += head_shift_y
@@ -131,7 +131,7 @@ class Snake:
                 fin_shift_y = -glb.SNAKE_PART_HEIGHT
 
             if fin_shift_x == 0 and fin_shift_y == 0:
-                return
+                return False
                 
             head_new_x = hpx + fin_shift_x
             head_new_y = hpy + fin_shift_y
@@ -161,6 +161,7 @@ class Snake:
             self.head.update_image_by_direction()
             
             self.vel = [0, 0]
+            return True
 
     def erase(self, screen, background):
         for part in self.parts:
