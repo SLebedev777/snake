@@ -37,6 +37,15 @@ class FoodFactory:
         
         self.table = table
         self.probas = probas
+        self.food_types = list(self.table.keys())
+        self.num_types = len(self.food_types)
+
+    def normalize_probas(self):
+        sum_probas = sum(self.probas)
+        if sum_probas == 0.0:
+            raise ValueError("sum probas are zero")
+        self.probas = [p/sum_probas for p in self.probas]
+
         
     def make(self, x, y, food_type):
         if food_type not in self.table:
@@ -48,10 +57,15 @@ class FoodFactory:
                     self.table[food_type].get('score', 1)
                     )
 
+
     def make_random(self, x, y):
-        food_type = random.choice(list(self.table.keys()), 
-                                  size = 1, 
-                                  p = self.probas)[0]
+        index = random.choice(range(self.num_types), 
+                              size = 1, 
+                              p = self.probas)[0]
+        food_type = self.food_types[index]
+        if self.table[food_type].get('once', False) and self.probas[index] > 0.0:
+            self.probas[index] = 0.0
+            self.normalize_probas()
         return self.make(x, y, food_type)
         
 
