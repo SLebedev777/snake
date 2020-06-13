@@ -38,6 +38,7 @@ class GameScene(Scene):
         self.level_name = level['level_name']
         
         self.grid = GameGrid(glb.GAMEGRIDRECT, glb.CELL_SIZE)
+        self.wrap_around = level.get('wrap_around', glb.SNAKE_CAN_WRAP_AROUND)
 
         # place head of the snake in the center and align to the grid    
         snake_x, snake_y = self.grid.cell2xy(*self.grid.xy2cell(glb.GAMEGRIDRECT.centerx, 
@@ -144,7 +145,7 @@ class GameScene(Scene):
         for part in snake.parts:
             grid.release_cell(*grid.xy2cell(*part.getpos()))
         
-        snake.move(self.up, self.right, self.walls)
+        snake.move(self.up, self.right, self.walls, self.wrap_around)
 
         for part in snake.parts:
             grid.occupy_cell(*grid.xy2cell(*part.getpos()))
@@ -158,6 +159,9 @@ class GameScene(Scene):
                 snake.add_part()
                 snake.parts[-2].dir2img_table = snake.neck.dir2img_table  # ugly code
 
+                if f.food_type == 'portal':
+                    self.wrap_around = True
+                    
                 if f.food_type == 'potion':
                     snd_eat_potion.play()
                 elif f.food_type == 'mushroom':

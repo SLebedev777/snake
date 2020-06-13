@@ -45,6 +45,7 @@ SNAKE_SHIFT_THRESHOLD_X = SNAKE_PART_WIDTH * SNAKE_SHIFT_COEFF
 SNAKE_SHIFT_THRESHOLD_Y = SNAKE_PART_HEIGHT * SNAKE_SHIFT_COEFF
 
 SNAKE_CAN_MOVE_ALONE = True  # debug option: snake moves along prev direction if no input
+SNAKE_CAN_WRAP_AROUND = False  # if snake can run through grid boundaries
 
 MAIN_DIR = os.getcwd()
 DATA_DIR = f'{MAIN_DIR}/data'

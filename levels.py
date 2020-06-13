@@ -39,10 +39,11 @@ level2 = LevelSettings(
                  )
 
 level3_food_table =  {'apple':  {'image': apple_image, 'health': 1, 'proba': 0.35},
-                      'banana': {'image': banana_image, 'health': 1, 'proba': 0.35},
+                      'banana': {'image': banana_image, 'health': 1, 'proba': 0.30},
                       'ananas': {'image': ananas_image, 'health': 1, 'score': 3, 'proba': 0.1},
                       'mushroom': {'image': mushroom_image, 'health': -50, 'proba': 0.15},
                       'potion': {'image': potion_image, 'health': 50, 'proba': 0.05},
+                      'portal': {'image': portal_image, 'health': 0, 'proba': 0.05, 'once': True},
                       }
 
 level3 = LevelSettings(

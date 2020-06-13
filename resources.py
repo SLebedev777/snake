@@ -41,6 +41,7 @@ apple_image = load_image(f'{glb.DATA_DIR}/apple.png', True)
 mushroom_image = load_image(f'{glb.DATA_DIR}/mushroom.png', True)
 potion_image = load_image(f'{glb.DATA_DIR}/potion.png', True)
 ananas_image = load_image(f'{glb.DATA_DIR}/ananas.png', True)
+portal_image = load_image(f'{glb.DATA_DIR}/portal.png', True)
 
 
 wall_image = load_image(f'{glb.DATA_DIR}/wall.png', True)
