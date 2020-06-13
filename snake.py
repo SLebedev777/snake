@@ -51,7 +51,7 @@ class Snake:
         self.health = max_health
         self.vel = [0, 0]
 
-    def move(self, up, right, walls=[]):
+    def move(self, up, right, walls=[], wrap_around=False):
         head_shift_x, head_shift_y = 0, 0
         new_direction = glb.DIRECTION_NONE
         
@@ -106,7 +106,7 @@ class Snake:
         if new_direction != glb.DIRECTION_NONE:
             # try to move the head and check if head goes outside the game world
             head_new_rect = self.head.rect.move(head_shift_x, head_shift_y)
-            if not glb.GAMEGRIDRECT.inflate(2*self.speed, 2*self.speed).contains(head_new_rect):
+            if not wrap_around and not glb.GAMEGRIDRECT.inflate(2*self.speed, 2*self.speed).contains(head_new_rect):
                 self.within_world = False
                 self.vel = [0, 0]
                 return False
@@ -119,6 +119,17 @@ class Snake:
             self.vel[1] += head_shift_y
             
             hpx, hpy = self.head.getpos()
+            
+            if wrap_around:
+                if head_new_rect.top < glb.GAMEGRIDRECT.top:
+                    hpy = glb.GAMEGRIDRECT.bottom
+                if head_new_rect.bottom > glb.GAMEGRIDRECT.bottom:
+                    hpy = glb.GAMEGRIDRECT.top - glb.CELL_SIZE
+                if head_new_rect.left < glb.GAMEGRIDRECT.left:
+                    hpx = glb.GAMEGRIDRECT.right
+                if head_new_rect.right > glb.GAMEGRIDRECT.right:
+                    hpx = glb.GAMEGRIDRECT.left - glb.CELL_SIZE
+
             fin_shift_x = 0
             fin_shift_y = 0
             if self.vel[0] >= glb.SNAKE_SHIFT_THRESHOLD_X:
@@ -135,6 +146,14 @@ class Snake:
                 
             head_new_x = hpx + fin_shift_x
             head_new_y = hpy + fin_shift_y
+            
+            if wrap_around:
+                head_new_rect.left = head_new_x
+                head_new_rect.top = head_new_y
+                for w in walls:
+                    if head_new_rect.colliderect(w.rect):
+                        self.vel = [0, 0]
+                        return False
                             
             # shift snake parts from tail to neck
             for i in range(len(self.parts)-1, 0, -1):
