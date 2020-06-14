@@ -40,7 +40,8 @@ class Snake:
     """
     Player
     """
-    def __init__(self, parts, speed=glb.SNAKE_PART_WIDTH, max_health=100):
+    def __init__(self, parts, speed=glb.SNAKE_PART_WIDTH, max_health=100,
+                 wrap_around=False):
         self.parts = parts
         self.speed = speed
         self.within_world = True
@@ -50,8 +51,9 @@ class Snake:
         self.max_health = max_health
         self.health = max_health
         self.vel = [0, 0]
+        self.wrap_around = wrap_around
 
-    def move(self, up, right, walls=[], wrap_around=False):
+    def move(self, up, right, walls=[]):
         head_shift_x, head_shift_y = 0, 0
         new_direction = glb.DIRECTION_NONE
         
@@ -106,7 +108,7 @@ class Snake:
         if new_direction != glb.DIRECTION_NONE:
             # try to move the head and check if head goes outside the game world
             head_new_rect = self.head.rect.move(head_shift_x, head_shift_y)
-            if not wrap_around and not glb.GAMEGRIDRECT.inflate(2*self.speed, 2*self.speed).contains(head_new_rect):
+            if not self.wrap_around and not glb.GAMEGRIDRECT.inflate(2*self.speed, 2*self.speed).contains(head_new_rect):
                 self.within_world = False
                 self.vel = [0, 0]
                 return False
@@ -120,7 +122,7 @@ class Snake:
             
             hpx, hpy = self.head.getpos()
             
-            if wrap_around:
+            if self.wrap_around:
                 if head_new_rect.top < glb.GAMEGRIDRECT.top:
                     hpy = glb.GAMEGRIDRECT.bottom
                 if head_new_rect.bottom > glb.GAMEGRIDRECT.bottom:
@@ -147,7 +149,7 @@ class Snake:
             head_new_x = hpx + fin_shift_x
             head_new_y = hpy + fin_shift_y
             
-            if wrap_around:
+            if self.wrap_around:
                 head_new_rect.left = head_new_x
                 head_new_rect.top = head_new_y
                 for w in walls:
@@ -204,7 +206,6 @@ class Snake:
 
         
     def update(self):
-        self.within_world = glb.GAMEGRIDRECT.contains(self.parts[0].rect)
         self.check_intersect_itself()
         self.check_health()
         for part in self.parts:
