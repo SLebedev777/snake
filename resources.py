@@ -82,12 +82,17 @@ dir2img_body[(glb.DIRECTION_LEFT, glb.DIRECTION_DOWN)] = pygame.transform.flip(
     body_curve_270, False, True)  
 
 # load sounds
-snd_eat_good_food = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/eat_good_food.wav')
-snd_eat_bad_food = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/eat_bad_food.ogg')
-snd_eat_potion = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/eat_potion.ogg')
-snd_you_win = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/you_win.wav')
-snd_you_loose = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/you_loose.wav')
-snd_menu_blip = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/menu_blip.wav')
-snd_menu_enter = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/menu_enter.wav')
-snd_final_tune = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/final_tune.ogg')
-snd_clock_tick = pygame.mixer.Sound(f'{glb.DATA_DIR}/sound/tick.wav')
+def load_sound(filename, volume=glb.SOUND_VOLUME):
+    s = pygame.mixer.Sound(filename)
+    s.set_volume(volume)
+    return s
+
+snd_eat_good_food = load_sound(f'{glb.DATA_DIR}/sound/eat_good_food.wav')
+snd_eat_bad_food = load_sound(f'{glb.DATA_DIR}/sound/eat_bad_food.ogg')
+snd_eat_potion = load_sound(f'{glb.DATA_DIR}/sound/eat_potion.ogg')
+snd_you_win = load_sound(f'{glb.DATA_DIR}/sound/you_win.wav')
+snd_you_loose = load_sound(f'{glb.DATA_DIR}/sound/you_loose.wav')
+snd_menu_blip = load_sound(f'{glb.DATA_DIR}/sound/menu_blip.wav')
+snd_menu_enter = load_sound(f'{glb.DATA_DIR}/sound/menu_enter.wav')
+snd_final_tune = load_sound(f'{glb.DATA_DIR}/sound/final_tune.ogg')
+snd_clock_tick = load_sound(f'{glb.DATA_DIR}/sound/tick.wav')
