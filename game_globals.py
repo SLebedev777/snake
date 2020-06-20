@@ -22,6 +22,7 @@ FULLSCREEN_MODE = False
 pygame.init()
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 
+SOUND_VOLUME = 0.4
 
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
@@ -58,3 +59,5 @@ DIRECTION_DOWN = -1
 DIRECTION_LEFT = -2
 DIRECTION_RIGHT = 2
 
+def opposite(direction):
+    return -direction

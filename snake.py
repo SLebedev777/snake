@@ -216,43 +216,54 @@ class Snake:
         for part in self.parts:
             part.draw(screen)
 
-    def add_part(self):
+    def add_part(self, grid):
         """
         Add new segment when snake eats food.
         """
-        # TODO (later): In some cases, tail seems to attach in wrong place,
-        # because first snake moves, and after that grows, and after 
-        # elongation, tail seems to "jump" aside. Not major bug.
-        # Also, sometimes tail overlaps asset (food or wall) that lies near tail,
-        # when snake eats fruit at head.
-        # Maybe it's needed to take not only walls but all game grid.
-
         
         tail = self.tail.clone()
         new_part = self.parts[-2].clone()
         new_part.setpos(*tail.getpos())
         new_part.direction = copy.deepcopy(new_part.direction_from)
         new_part.update_image_by_direction()
+
+        tail_shifts = {glb.DIRECTION_UP:    (0, glb.SNAKE_PART_HEIGHT),
+                       glb.DIRECTION_DOWN:  (0, -glb.SNAKE_PART_HEIGHT),
+                       glb.DIRECTION_LEFT:  (glb.SNAKE_PART_WIDTH, 0),
+                       glb.DIRECTION_RIGHT: (-glb.SNAKE_PART_WIDTH, 0)
+                       }
         
-        if tail.direction == glb.DIRECTION_UP:
-            # shift down
-            new_x = tail.rect.x
-            new_y = tail.rect.y + glb.SNAKE_PART_HEIGHT
-        elif tail.direction == glb.DIRECTION_DOWN:
-            # shift up
-            new_x = tail.rect.x
-            new_y = tail.rect.y - glb.SNAKE_PART_HEIGHT
-        elif tail.direction == glb.DIRECTION_LEFT:
-            # shift right
-            new_x = tail.rect.x + glb.SNAKE_PART_WIDTH
-            new_y = tail.rect.y
-        elif tail.direction == glb.DIRECTION_RIGHT:
-            # shift left
-            new_x = tail.rect.x - glb.SNAKE_PART_WIDTH
-            new_y = tail.rect.y
-        tail.setpos(new_x, new_y)
+        try_tail_directions = [tail.direction] + \
+            [d for d in tail_shifts.keys() if d != tail.direction and \
+             d != glb.opposite(tail.direction)]
+        
+        tail_old_pos = tail.getpos()
+        tail_new_pos_found = False
+        for d in try_tail_directions:
+            tail.setpos(*tail_old_pos)
+            new_x = tail.rect.x + tail_shifts[d][0]
+            new_y = tail.rect.y + tail_shifts[d][1]
+            tail.setpos(new_x, new_y)
+            if not glb.GAMEGRIDRECT.contains(tail.rect):
+                continue
+            if grid.cell_occupied(*grid.xy2cell(new_x, new_y)):
+                continue
+            tail.direction = d
+            tail.direction_from = d
+            tail.update_image_by_direction()
+            tail_new_pos_found = True
+            break
+        if not tail_new_pos_found:
+            #  i can't imagine this situation
+            return
+            
+        new_part.direction_from = tail.direction
+        new_part.dir2img_table = self.neck.dir2img_table  # kinks can occur
+        new_part.update_image_by_direction()
+        
         self.parts.append(tail)
         self.parts[-2] = new_part
+        grid.occupy_cell(*grid.xy2cell(tail.x, tail.y))
 
     def kill(self):
         self.alive = False

@@ -17,6 +17,7 @@ if __name__ == '__main__':
     pygame.init()
     pygame.font.init()
     pygame.mouse.set_visible(0)
+
     scenes = [main_menu,
               options_menu,
               difficulty_menu,

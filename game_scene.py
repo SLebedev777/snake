@@ -156,8 +156,7 @@ class GameScene(Scene):
         # grow snake if it eats food
         for f in food:
             if snake.head.rect.colliderect(f.rect):
-                snake.add_part()
-                snake.parts[-2].dir2img_table = snake.neck.dir2img_table  # ugly code
+                snake.add_part(grid)
 
                 if f.food_type == 'portal':
                     snake.wrap_around = True
