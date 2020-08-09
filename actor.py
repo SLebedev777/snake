@@ -10,12 +10,14 @@ from game_globals import SCREENRECT
 dirtyrects = []
 
 class Actor(pygame.sprite.Sprite):
-    def __init__(self, x, y, image):
+    def __init__(self, x, y, image, animation=None):
         super().__init__()
         self.image = image
+        self.still_image = image.copy()
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.animation = animation
 
     def setpos(self, x, y):
         self.rect.x = x
@@ -37,6 +39,13 @@ class Actor(pygame.sprite.Sprite):
         dirtyrects.append(r)
 
     def update(self):
+        if self.animation is not None and not self.animation.over:
+            self.animation.next_tick()
+            old_center = self.rect.center
+            self.image = self.animation.get_image()
+            self.rect = self.image.get_rect()
+            self.rect.center = old_center
+    
         self.rect = self.rect.clamp(SCREENRECT)
  
     @property
@@ -46,3 +55,4 @@ class Actor(pygame.sprite.Sprite):
     @property
     def y(self):
         return self.rect.y
+

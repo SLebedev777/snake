@@ -5,11 +5,12 @@ Created on Sat May 23 20:45:37 2020
 @author: Семен
 """
 from actor import Actor
+from animation import Animation
 from numpy import random
 
 class Food(Actor):
-    def __init__(self, x, y, image, food_type, health=5, score=1):
-        super().__init__(x, y, image)
+    def __init__(self, x, y, image, food_type, health=5, score=1, animation=None):
+        super().__init__(x, y, image, animation)
         self.food_type = food_type
         self.health = health  # if health is negative, snake looses HP by eating this fruit
         self.score = score
@@ -50,11 +51,15 @@ class FoodFactory:
     def make(self, x, y, food_type):
         if food_type not in self.table:
             raise ValueError(f"Trying to create unknown food with type: {food_type}")
+            
+        anim_params = self.table[food_type].get('animation_params', None)
+        animation = Animation(**anim_params) if anim_params is not None else None
         return Food(x, y, 
                     self.table[food_type]['image'],
                     food_type,
                     self.table[food_type]['health'],
-                    self.table[food_type].get('score', 1)
+                    self.table[food_type].get('score', 1),
+                    animation
                     )
 
 
