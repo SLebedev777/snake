@@ -8,7 +8,7 @@ Created on Sat May 30 19:08:56 2020
 import pygame
 from scene import Scene
 from scene_manager import SceneManager
-from screen_text import ScreenText
+from screen_text import ScreenText, ScreenTextBitmapFont
 import game_globals as glb
 from actor import dirtyrects
 from group import Group
@@ -20,14 +20,13 @@ import resources as rsc
 
 class SplashScreenScene(Scene):
     caption = None
-    texts = [ScreenText('Нажмите Пробел для продолжения...', 30, 100, glb.WHITE)]
-    font_size = 50
+    texts = [ScreenTextBitmapFont('Press Space to continue', 50, 100, rsc.bitmap_font)]
     
     def build(self):
         self.group = Group([self.caption] + self.texts)
         for actor in self.group:
             actor.move(self.rect.left, self.rect.top)
-        self.background.fill(glb.GREY)
+        self.background.fill(glb.DARK_GREY)
         self.built = True
  
     def update(self):
@@ -51,11 +50,12 @@ class SplashScreenScene(Scene):
 
 
 class YouLooseSplashScreenScene(SplashScreenScene):
-    caption = ScreenText('ПРОИГРЫШ', 10, 50, glb.WHITE, 70)
-    texts = [ScreenText('Нажмите Пробел чтобы сыграть уровень заново...', 30, 100, glb.WHITE),
-             ScreenText('Нажмите Escape для выхода в Главное меню', 30, 150, glb.WHITE)
+    font_size = rsc.bitmap_font.height
+    caption = ScreenTextBitmapFont('YOU LOOSE :(', 50, 50, rsc.bitmap_font_large)
+    texts = [ScreenTextBitmapFont('Press Space to replay', 50, 100, rsc.bitmap_font),
+             ScreenTextBitmapFont('Press Esc to main menu', 50, 110+font_size, rsc.bitmap_font),
              ]
-
+    
     def enter(self):
         rsc.snd_you_loose.play()
 
@@ -74,7 +74,7 @@ class YouLooseSplashScreenScene(SplashScreenScene):
            self.scene_manager.pop_scene()
 
 class YouWinSplashScreenScene(SplashScreenScene):
-    caption = ScreenText('ПОБЕДА!', 10, 50, glb.WHITE, 70)
+    caption = ScreenTextBitmapFont('YOU WIN!', 110, 50, rsc.bitmap_font_large)
     
     def enter(self):
         rsc.snd_you_win.play()
@@ -83,10 +83,9 @@ class YouWinSplashScreenScene(SplashScreenScene):
         rsc.snd_you_win.stop()
 
 class FinalSplashScreenScene(SplashScreenScene):
-    caption = ScreenText('ВСЯ ИГРА ПРОЙДЕНА!!!', 10, 50, glb.WHITE, 70)
-    texts = [ScreenText('Нажмите Escape для выхода в Главное меню', 30, 150, glb.WHITE)
-             ]
-
+    caption = ScreenTextBitmapFont('ALL GAME FINISHED!!!', 60, 100, rsc.bitmap_font_large)
+    texts = [ScreenTextBitmapFont('Press Esc to Main Menu', 170, 400, rsc.bitmap_font)]
+    
     def enter(self):
         rsc.snd_final_tune.play()
 
@@ -100,6 +99,6 @@ class FinalSplashScreenScene(SplashScreenScene):
            gs.game_scene.destroy()
            self.scene_manager.pop_scene()
     
-you_loose_splash_screen = YouLooseSplashScreenScene(glb.MENURECT)
-you_win_splash_screen = YouWinSplashScreenScene(glb.MENURECT)
-final_splash_screen = FinalSplashScreenScene(glb.MENURECT)
+you_loose_splash_screen = YouLooseSplashScreenScene(glb.SPLASHRECT)
+you_win_splash_screen = YouWinSplashScreenScene(glb.SPLASHRECT)
+final_splash_screen = FinalSplashScreenScene(glb.FINALSPLASHRECT)

@@ -167,7 +167,7 @@ class Snake:
                 curr_part.update_image_by_direction()
 
             # correct tail direction (no kinks allowed)
-            self.tail.direction_from = self.tail.direction
+            #self.tail.direction_from = self.tail.direction
             self.tail.update_image_by_direction()
             
             # kink neck if needed

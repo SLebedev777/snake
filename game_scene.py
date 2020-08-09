@@ -12,7 +12,7 @@ from game_grid import GameGrid
 from actor import dirtyrects
 from snake import SnakePart, Snake
 from assets import Food, FoodFactory, Wall
-from screen_text import ScreenText
+from screen_text import ScreenText, ScreenTextBitmapFont
 
 from scene import Scene
 from scene_manager import SceneManager
@@ -112,11 +112,11 @@ class GameScene(Scene):
         self.timer = RepeatedTimer(1, self.increase_time, None)
         
         # reset texts
-        self.text_score = ScreenText(f'ОЧКОВ: {self.score} из {self.score_needed}', 
-                                     10, 20, glb.WHITE)
-        self.text_health = ScreenText(f'ЗДОРОВЬЕ: {self.snake.health}', 650, 20, glb.WHITE)        
-        self.text_time = ScreenText(f'ВРЕМЯ: {self.time_elapsed} сек', glb.WIDTH//2, 20, glb.WHITE)        
-        self.text_level_name = ScreenText(f'{self.level_name}', glb.WIDTH//4, 20, glb.WHITE)
+        self.text_score = ScreenTextBitmapFont('', 10, 20, bitmap_font)
+        self.text_health = ScreenTextBitmapFont('', 630, 20, bitmap_font)
+        self.text_time = ScreenTextBitmapFont('', glb.WIDTH//2, 20, bitmap_font)
+        self.text_level_name = ScreenTextBitmapFont(f'{self.level_name}', glb.WIDTH//4 + 32, 20, bitmap_font)
+
         self.texts =  Group([self.text_score, self.text_health, 
                              self.text_time,
                              self.text_level_name])
@@ -193,12 +193,12 @@ class GameScene(Scene):
         snake.update()
 
         # update texts
-        self.text_score.set_text(f'ОЧКОВ: {self.score} из {self.score_needed}')
-        self.text_health.set_text(f'ЗДОРОВЬЕ: {snake.health}')
+        self.text_score.set_text(f'SCORE: {self.score}/{self.score_needed}')
+        self.text_health.set_text(f'HEALTH: {snake.health}')
         if self.max_time:
-            self.text_time.set_text(f'ВРЕМЯ: {self.time_elapsed} сек из {self.max_time}')
+            self.text_time.set_text(f'TIME: {self.time_elapsed}/{self.max_time}')
         else:
-            self.text_time.set_text(f'ВРЕМЯ: {self.time_elapsed} сек')
+            self.text_time.set_text(f'TIME: {self.time_elapsed}')
 
 
     def clear_screen(self, screen):

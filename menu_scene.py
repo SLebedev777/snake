@@ -8,9 +8,9 @@ Created on Fri May 29 20:07:41 2020
 import pygame
 from scene import Scene
 from scene_manager import SceneManager
-from screen_text import ScreenText
+from screen_text import ScreenText, ScreenTextBitmapFont
 import game_globals as glb
-from actor import dirtyrects
+from actor import dirtyrects, Actor
 from group import Group
 
 import os, sys
@@ -24,8 +24,10 @@ class MenuScene(Scene):
     font_size = 50
     
     def build(self):
-        self.pointer = ScreenText('--> ', self.options[0].x - 50, self.options[0].y, 
-                                  glb.WHITE, self.font_size)
+        self.pointer = ScreenTextBitmapFont('>', 
+                                            self.options[0].x - 50, 
+                                            self.options[0].y,
+                                            bitmap_font_large)
         self.group = Group([self.caption, self.pointer] + self.options)
         for actor in self.group:
             actor.move(self.rect.left, self.rect.top)
@@ -34,7 +36,6 @@ class MenuScene(Scene):
         self.prev_option = -1
         self.move_up = 0
         self.background.fill(glb.NAVY)
-        #self.background.blit(logo_image, (50, 50))
         self.built = True
  
     def update(self):
@@ -53,7 +54,7 @@ class MenuScene(Scene):
     def draw(self, screen):
         self.group.draw(screen)
         pygame.display.update(dirtyrects)
-        
+       
     def handle_transitions(self, event):
         pass
 
@@ -64,12 +65,12 @@ class MenuScene(Scene):
 
 
 class MainMenuScene(MenuScene):
-    font_size = 50
-    caption = ScreenText('ГЛАВНОЕ МЕНЮ', 100, 10, glb.WHITE, font_size)
-    options = [ScreenText('Новая игра', 100, 10+font_size, glb.WHITE, font_size),
-               ScreenText('Настройки', 100, 10+2*font_size, glb.WHITE, font_size),
-               ScreenText('Выход', 100, 10+3*font_size, glb.WHITE, font_size)
-               ]
+    font_size = bitmap_font_large.height
+    caption = ScreenTextBitmapFont('JUST SNAKE!', 70, 10, bitmap_font_large)
+    options = [ScreenTextBitmapFont('NEW GAME', 70, 32+font_size, bitmap_font_large),
+              ScreenTextBitmapFont('OPTIONS', 70, 32+2*font_size, bitmap_font_large),
+              ScreenTextBitmapFont('QUIT', 70, 32+3*font_size, bitmap_font_large)
+              ]
 
     def handle_transitions(self, event):
        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
@@ -88,12 +89,11 @@ class MainMenuScene(MenuScene):
 
 
 class OptionsMenuScene(MenuScene):
-    font_size = 50
-    caption = ScreenText('НАСТРОЙКИ', 100, 10, glb.WHITE, font_size)
-    options = [
-               ScreenText('Полный экран вкл/выкл', 100, 10+font_size, glb.WHITE, font_size),
-               ScreenText('Назад', 100, 10+2*font_size, glb.WHITE, font_size),
-               ]
+    font_size = bitmap_font_large.height
+    caption = ScreenTextBitmapFont('OPTIONS', 70, 10, bitmap_font_large)
+    options = [ScreenTextBitmapFont('FULLSCREEN ON/OFF', 70, 32+font_size, bitmap_font_large),
+              ScreenTextBitmapFont('BACK', 70, 32+2*font_size, bitmap_font_large),
+              ]
 
     def handle_transitions(self, event):
        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
@@ -107,12 +107,13 @@ class OptionsMenuScene(MenuScene):
            self.scene_manager.pop_scene()
 
 class DifficultyMenuScene(MenuScene):
-    font_size = 50
-    caption = ScreenText('СЛОЖНОСТЬ', 100, 10, glb.WHITE, font_size)
-    options = [ScreenText('Легкая', 100, 10+font_size, glb.WHITE, font_size),
-               ScreenText('Нормальная', 100, 10+2*font_size, glb.WHITE, font_size),
-               ScreenText('Назад', 100, 10+3*font_size, glb.WHITE, font_size),
-               ]
+    font_size = bitmap_font_large.height
+    caption = ScreenTextBitmapFont('DIFFICULTY', 70, 10, bitmap_font_large)
+    options = [ScreenTextBitmapFont('EASY', 70, 32+font_size, bitmap_font_large),
+              ScreenTextBitmapFont('NORMAL', 70, 32+2*font_size, bitmap_font_large),
+              ScreenTextBitmapFont('BACK', 70, 32+3*font_size, bitmap_font_large),
+              ]
+
 
     def handle_transitions(self, event):
        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
