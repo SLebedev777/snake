@@ -48,7 +48,7 @@ level3_food_table =  {'apple':  {'image': apple_image, 'health': 1, 'proba': 0.3
                                    'animation_params': mushroom_animation_params},
                       'potion': {'image': potion_image, 'health': 50, 'proba': 0.05,
                                  'animation_params': potion_animation_params},
-                      'portal': {'image': portal_image, 'health': 0, 'proba': 0.05, 'once': True,
+                      'portal': {'image': portal_image, 'health': 0, 'proba': 0.05, 'once': False,
                                  'animation_params': portal_animation_params},
                       }
 

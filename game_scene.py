@@ -26,6 +26,25 @@ from resources import *
 
 from levels import *
 
+class BlinkingRectFX:
+    def __init__(self):
+        self.color = 0
+        self.sign = 1
+    
+    def draw(self, surface):
+        '''
+        Draw by tick
+        '''
+        self.color += self.sign * 5
+        if self.color > 200:
+            self.color = 200
+            self.sign *= -1
+        if self.color < 0:
+            self.color = 0
+            self.sign *= -1
+        pygame.draw.rect(surface, (0, self.color, 0), glb.GAMEGRIDRECT, 2)
+
+
 class GameScene(Scene):
     def __init__(self, rect, levels):
         super().__init__(rect)
@@ -127,6 +146,8 @@ class GameScene(Scene):
 
         self.up = 0
         self.right = 0
+
+        self.blinking_rect_fx = BlinkingRectFX()   
         
         self.built = True
 
@@ -152,6 +173,9 @@ class GameScene(Scene):
     
         if snake.intersect_itself or not snake.within_world:
             snake.kill()   
+
+        if snake.wrap_around and self.time_elapsed - self.wrap_around_time > 15:
+            self.snake.wrap_around = False
         
         # grow snake if it eats food
         for f in food:
@@ -161,6 +185,7 @@ class GameScene(Scene):
 
                 if f.food_type == 'portal':
                     snake.wrap_around = True
+                    self.wrap_around_time = self.time_elapsed
                     
                 if f.food_type == 'potion':
                     snd_eat_potion.play()
@@ -214,6 +239,8 @@ class GameScene(Scene):
         self.walls.draw(screen)
         self.food.draw(screen)
         self.texts.draw(screen)
+        if self.snake.wrap_around:
+            self.blinking_rect_fx.draw(screen)
         pygame.display.update(dirtyrects)
 
     def time_is_out(self, delta=0):
