@@ -155,7 +155,8 @@ class GameScene(Scene):
         
         # grow snake if it eats food
         for f in food:
-            if snake.head.rect.colliderect(f.rect):
+            food_rect = grid.get_cell_rect(*grid.xy2cell(*f.rect.center))
+            if snake.head.rect.colliderect(food_rect):
                 snake.add_part(grid)
 
                 if f.food_type == 'portal':

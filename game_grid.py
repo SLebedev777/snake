@@ -6,6 +6,7 @@ Created on Tue Apr 28 00:39:47 2020
 """
 
 import numpy as np
+import pygame
 
 class GameGrid:
     def __init__(self, rect, cell_size):
@@ -18,6 +19,12 @@ class GameGrid:
         self.n_cells_y = rect.height // cell_size
         self.shape = (self.n_cells_x, self.n_cells_y)
         self.cells = np.zeros(self.shape)
+        self.cells_rects = [
+            [pygame.Rect(*self.cell2xy(cix, ciy), cell_size, cell_size) 
+             for ciy in range(self.n_cells_y)
+            ] 
+             for cix in range(self.n_cells_x)
+                           ]
 
        
     def align(self, actor):
@@ -56,6 +63,10 @@ class GameGrid:
     def cell_occupied(self, cix, ciy):
         cix, ciy = self.bound2rect(cix, ciy)
         return self.cells[cix, ciy] > 0
+
+    def get_cell_rect(self, cix, ciy):
+        cix, ciy = self.bound2rect(cix, ciy)
+        return self.cells_rects[cix][ciy]
         
     def occupy_cell(self, cix, ciy):
         cix, ciy = self.bound2rect(cix, ciy)
