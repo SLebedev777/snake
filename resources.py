@@ -82,11 +82,44 @@ portal_image = load_image(f'{glb.DATA_DIR}/portal.png', True)
 
 banana_animation_params = {'id2image_dict': {i: v for i, v in enumerate([
                                 banana_image,
-                                pygame.transform.rotate(banana_image, -10),
-                                pygame.transform.rotate(banana_image, 10),
+                                pygame.transform.rotate(banana_image, -5),
+                                pygame.transform.rotate(banana_image, 5),
                                 ])
                              },
                     'frames': [(0, glb.FPS*3), (1, 10), (2, 10), (1, 10), (2, 10) ]
+                    }
+
+apple_animation_params = {'id2image_dict': {i: v for i, v in enumerate([
+                                apple_image,
+                                pygame.transform.scale(apple_image, (40, 35)),
+                                ])
+                             },
+                    'frames': [(0, glb.FPS*3), (1, 10), (0, 10), (1, 10) ]
+                    }
+
+mushroom_animation_params = {'id2image_dict': {i: v for i, v in enumerate([
+                                mushroom_image,
+                                pygame.transform.scale(mushroom_image, (40, 35)),
+                                ])
+                             },
+                    'frames': [(0, glb.FPS*3), (1, 10), (0, 10), (1, 10) ]
+                    }
+
+ananas_animation_params = {'id2image_dict': {i: v for i, v in enumerate([
+                                ananas_image,
+                                pygame.transform.rotate(ananas_image, -5),
+                                pygame.transform.rotate(ananas_image, 5),
+                                ])
+                             },
+                    'frames': [(0, glb.FPS*3), (1, 10), (2, 10), (1, 10), (2, 10) ]
+                    }
+
+potion_animation_params = {'id2image_dict': {i: v for i, v in enumerate([
+                                potion_image,
+                                pygame.transform.scale(potion_image, (40, 35)),
+                                ])
+                             },
+                    'frames': [(0, glb.FPS*3), (1, 10), (0, 10), (1, 10) ]
                     }
 
 portal_animation_params = {'id2image_dict': {i: v for i, v in enumerate([
