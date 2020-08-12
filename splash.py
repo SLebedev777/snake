@@ -12,6 +12,8 @@ from screen_text import ScreenText, ScreenTextBitmapFont
 import game_globals as glb
 from actor import dirtyrects
 from group import Group
+from particles import Particle
+from random import randint, uniform
 
 import os, sys
 
@@ -75,7 +77,7 @@ class YouLooseSplashScreenScene(SplashScreenScene):
 
 class YouWinSplashScreenScene(SplashScreenScene):
     caption = ScreenTextBitmapFont('YOU WIN!', 110, 50, rsc.bitmap_font_large)
-    
+           
     def enter(self):
         rsc.snd_you_win.play()
 
@@ -85,6 +87,41 @@ class YouWinSplashScreenScene(SplashScreenScene):
 class FinalSplashScreenScene(SplashScreenScene):
     caption = ScreenTextBitmapFont('ALL GAME FINISHED!!!', 60, 100, rsc.bitmap_font_large)
     texts = [ScreenTextBitmapFont('Press Esc to Main Menu', 170, 400, rsc.bitmap_font)]
+    particles = []
+   
+    def update(self):
+        # particle fireworks VFX
+        # create new bunch of sparks
+        if randint(0, glb.FPS) == 5:
+            x = randint(self.rect.left + 30, self.rect.right - 30)
+            y = randint(self.rect.top + 150, self.rect.bottom - 10)
+            color = [randint(150, 255), randint(150, 255), randint(150, 255)]
+            gravity = 0.1
+            bounding_rect = self.rect.inflate(-10, -10)
+            for i in range(randint(80, 200)):
+                vx = uniform(-3, 3)  # TODO: make vx, vy Gaussian
+                vy = -uniform(2, 6)
+                radius = randint(2, 5)
+                lifetime = randint(3*glb.FPS, 5*glb.FPS)
+                particle = Particle(x, y, vx, vy, color, radius, lifetime, gravity,
+                              vx_func=lambda vx: vx - 0.01,
+                              size_func=lambda size: size - 0.03,
+                              rect=bounding_rect)
+                self.particles.append(particle)
+
+        self.particles = [p for p in self.particles if p.alive]
+        
+        super().update()
+
+
+    def draw(self, screen):
+        super().draw(screen)
+        # draw particles twice a frame: before and after coordinates update,
+        # to emulate "spark trace" effect
+        for particle in self.particles:
+            particle.draw(screen)
+            particle.update()
+            particle.draw(screen)
     
     def enter(self):
         rsc.snd_final_tune.play()
