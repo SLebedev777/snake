@@ -13,7 +13,7 @@ import game_globals as glb
 from actor import dirtyrects
 from group import Group
 from particles import Particle
-from random import randint, uniform
+from random import randint, uniform, gauss
 
 import os, sys
 
@@ -99,12 +99,12 @@ class FinalSplashScreenScene(SplashScreenScene):
             gravity = 0.1
             bounding_rect = self.rect.inflate(-10, -10)
             for i in range(randint(80, 200)):
-                vx = uniform(-3, 3)  # TODO: make vx, vy Gaussian
-                vy = -uniform(2, 6)
+                vx = gauss(0, 3)
+                vy = -uniform(6, 2)
                 radius = randint(2, 5)
                 lifetime = randint(3*glb.FPS, 5*glb.FPS)
                 particle = Particle(x, y, vx, vy, color, radius, lifetime, gravity,
-                              vx_func=lambda vx: vx - 0.01,
+                              vx_func=lambda vx: vx - 0.02,
                               size_func=lambda size: size - 0.03,
                               rect=bounding_rect)
                 self.particles.append(particle)
