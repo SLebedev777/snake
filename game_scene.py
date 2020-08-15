@@ -20,6 +20,7 @@ from group import Group
 from splash import you_loose_splash_screen, you_win_splash_screen, final_splash_screen
 
 from timer import RepeatedTimer
+from particles import Particle
 
 # load once all images and sounds
 from resources import *
@@ -44,6 +45,19 @@ class BlinkingRectFX:
             self.sign *= -1
         pygame.draw.rect(surface, (0, self.color, 0), glb.GAMEGRIDRECT, 2)
 
+
+def spawn_bubble_border_size_func(border_size, size):
+    # helper function to draw expanding circle like bubble around new spawned food
+    if size < 10: return 0
+    elif size > 70: return 1
+    else: return -0.142*size + 11
+
+food_type_to_bubble_color = {'apple': glb.PINK,
+                             'banana': glb.PINK,
+                             'ananas': glb.PINK,
+                             'mushroom': glb.WHITE,
+                             'potion': glb.BLUE,
+                             'portal': glb.GREEN}
 
 class GameScene(Scene):
     def __init__(self, rect, levels):
@@ -149,6 +163,8 @@ class GameScene(Scene):
 
         self.blinking_rect_fx = BlinkingRectFX()   
         
+        self.particles = []
+        
         self.built = True
 
     def increase_time(self, *args, **kwargs):
@@ -204,10 +220,31 @@ class GameScene(Scene):
                 food.remove(f)
 
                 fc = grid.get_random_free_cell()
-                if fc:
+                if fc is not None:
                     food_x, food_y = grid.cell2xy(*fc)
                     grid.occupy_cell(*fc)
-                    food.append(self.food_factory.make_random(food_x, food_y))
+                    new_food = self.food_factory.make_random(food_x, food_y)
+                    food.append(new_food)
+                    # FX: create new pretty color bubble that will expand around created food
+                    for _ in range(1):
+                        x = new_food.rect.centerx
+                        y = new_food.rect.centery
+                        color = food_type_to_bubble_color.get(new_food.food_type,
+                                                              glb.PINK)
+                        gravity = 0
+                        vx = 0
+                        vy = 0
+                        radius = 1
+                        border_size = 2
+                        lifetime = 25
+                        rect = new_food.rect.inflate(10, 10)
+                        particle = Particle(x, y, vx, vy, color, radius, lifetime, gravity,
+                                            border_size,
+                                      size_func=lambda size: size + 3.5,
+                                      border_size_func=spawn_bubble_border_size_func,
+                                      #rect=rect
+                                      )
+                        self.particles.append(particle)
 
         if not self.snake.alive or self.time_is_out():
             pygame.event.post(pygame.event.Event(self.EVENT_PLAYER_LOOSE_LEVEL))
@@ -217,6 +254,10 @@ class GameScene(Scene):
             pygame.event.post(pygame.event.Event(self.EVENT_PLAYER_WIN_LEVEL))
 
         snake.update()
+
+        for p in self.particles:
+            p.update()
+        self.particles = [p for p in self.particles if p.alive]
 
         # update texts
         self.text_score.set_text(f'SCORE: {self.score}/{self.score_needed}')
@@ -242,6 +283,9 @@ class GameScene(Scene):
         if self.snake.wrap_around:
             self.blinking_rect_fx.draw(screen)
         pygame.display.update(dirtyrects)
+        for particle in self.particles:
+            particle.draw(screen)
+
 
     def time_is_out(self, delta=0):
         if self.max_time <= 0:
