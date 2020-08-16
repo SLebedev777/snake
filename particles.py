@@ -10,21 +10,21 @@ class Particle:
     def __init__(self, x, y, vx, vy, color, size, lifetime, gravity=0, border_size=0,
                  vx_func=None, vy_func=None, size_func=None, color_func=None, rect=None,
                  border_size_func=None):
-        self.x = x
-        self.y = y
-        self.vx = vx
-        self.vy = vy
-        self.color = color
-        self.size = size
-        self.lifetime = lifetime
-        self.gravity = gravity
-        self.vx_func = vx_func
-        self.vy_func = vy_func
-        self.size_func = size_func
-        self.color_func = color_func
-        self.rect = rect
-        self.border_size = border_size
-        self.border_size_func = border_size_func
+        self.x = x  # starting x
+        self.y = y  # starting y
+        self.vx = vx  # starting horizontal velocity per frame
+        self.vy = vy  # starting vertical velocity per frame
+        self.color = color  # starting color
+        self.size = size  # starting radius
+        self.lifetime = lifetime  # lifetime in gameloop frames
+        self.gravity = gravity  # vertical velocity acceleration per frame
+        self.vx_func = vx_func  # horizontal velocity function
+        self.vy_func = vy_func  # vertical velocity function
+        self.size_func = size_func  # radius change function
+        self.color_func = color_func  # color change function
+        self.rect = rect  # bounding rect. Particle dies if it goes outsife this rect.
+        self.border_size = border_size  # starting circle border width
+        self.border_size_func = border_size_func  # border circle width function
         
     def update(self):
         if not self.alive:
