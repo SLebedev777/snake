@@ -58,7 +58,9 @@ class Particle:
     def draw(self, surface):
         if self.alive:
             pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), 
-                               int(self.size), int(self.border_size))
+                               int(self.size), 
+                               min(int(self.size), int(self.border_size))
+                               )
     
     @property
     def alive(self):
