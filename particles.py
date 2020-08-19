@@ -9,7 +9,8 @@ import pygame
 class Particle:
     def __init__(self, x, y, vx, vy, color, size, lifetime, gravity=0, border_size=0,
                  vx_func=None, vy_func=None, size_func=None, color_func=None, rect=None,
-                 border_size_func=None):
+                 border_size_func=None, glow_size=None, glow_value=None,
+                 glow_size_func=None, glow_value_func=None):
         self.x = x  # starting x
         self.y = y  # starting y
         self.vx = vx  # starting horizontal velocity per frame
@@ -25,6 +26,10 @@ class Particle:
         self.rect = rect  # bounding rect. Particle dies if it goes outsife this rect.
         self.border_size = border_size  # starting circle border width
         self.border_size_func = border_size_func  # border circle width function
+        self.glow_size = glow_size if glow_size is not None else 0
+        self.glow_value = glow_value if glow_value is not None else 0
+        self.glow_size_func = glow_size_func
+        self.glow_value_func = glow_value_func
         
     def update(self):
         if not self.alive:
@@ -52,6 +57,14 @@ class Particle:
         self.x += self.vx
         self.y += self.vy
         
+        if self.glow_size_func is not None:
+            self.glow_size = self.glow_size_func(self.glow_size)
+        self.glow_size = max(0, self.glow_size)
+        if self.glow_value_func is not None:
+            self.glow_value = self.glow_value_func(self.glow_value)
+        self.glow_value = max(0, self.glow_value)
+
+        
         self.lifetime -= 1
         self.lifetime = max(0, self.lifetime)
         
@@ -61,6 +74,16 @@ class Particle:
                                int(self.size), 
                                min(int(self.size), int(self.border_size))
                                )
+            if self.glow_size > 0:
+                gsz = int(self.glow_size)
+                gval = self.glow_value
+                glow_surf = pygame.Surface((gsz*2, gsz*2))
+                pygame.draw.circle(glow_surf, (gval, gval, gval), (gsz, gsz), gsz)
+                glow_surf.set_colorkey((0, 0, 0))
+                surface.blit(glow_surf, 
+                             (int(self.x)-gsz, int(self.y)-gsz), 
+                             special_flags=pygame.BLEND_RGB_ADD)
+                
     
     @property
     def alive(self):
