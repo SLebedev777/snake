@@ -104,7 +104,7 @@ class FinalSplashScreenScene(SplashScreenScene):
                 vy = -uniform(6, 2)
                 radius = randint(2, 5)
                 glow_size = radius*2
-                glow_value = 30
+                glow_value = 25
                 lifetime = randint(3*glb.FPS, 5*glb.FPS)
                 particle = Particle(x, y, vx, vy, color, radius, lifetime, gravity,
                               vx_func=lambda vx: vx - 0.02,
@@ -112,7 +112,7 @@ class FinalSplashScreenScene(SplashScreenScene):
                               rect=bounding_rect,
                               glow_size=glow_size, glow_value=glow_value,
                               glow_size_func=lambda gsz: gsz - 0.02,
-                              glow_value_func=lambda gval: gval - 0.2)
+                              glow_value_func=lambda gval: gval - 0.3)
                 self.particles.append(particle)
 
         self.particles = [p for p in self.particles if p.alive]
