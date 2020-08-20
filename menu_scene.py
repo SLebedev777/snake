@@ -12,11 +12,37 @@ from screen_text import ScreenText, ScreenTextBitmapFont
 import game_globals as glb
 from actor import dirtyrects, Actor
 from group import Group
-
+from snake import SnakePart, Snake
+from random import randint
 import os, sys
 
 from game_scene import *
 from resources import *
+
+menu_snake = None
+
+def create_menu_snake():
+    if menu_snake is not None:
+        return menu_snake    
+    snake_x, snake_y = glb.MENURECT.centerx, glb.MENURECT.centery // 2
+    # create snake parts
+    parts = []
+    parts.append(SnakePart(snake_x, snake_y, head_image, glb.DIRECTION_UP, glb.DIRECTION_UP,
+                     dir2img_head)
+                 )
+    for i in range(5):
+        parts.append(SnakePart(snake_x, snake_y + glb.SNAKE_PART_HEIGHT*(i+1), 
+                     body_straight_image, glb.DIRECTION_UP, glb.DIRECTION_UP,
+                     dir2img_body)
+                     )
+    parts.append(SnakePart(snake_x, snake_y + glb.SNAKE_PART_HEIGHT*(i+1), 
+                     tail_image, glb.DIRECTION_UP, glb.DIRECTION_UP,
+                     dir2img_tail)
+                 )
+    return Snake(parts, speed=9, wrap_around=True, bounding_rect=glb.MENURECT)
+
+menu_snake = create_menu_snake()  # 1 snake for all menu scenes
+
 
 class MenuScene(Scene):
     caption = None
@@ -36,6 +62,11 @@ class MenuScene(Scene):
         self.prev_option = -1
         self.move_up = 0
         self.background.fill(glb.NAVY)
+
+        self.snake_up = 0
+        self.snake_right = 0
+        self.group_snake = Group([menu_snake])
+
         self.built = True
  
     def update(self):
@@ -45,13 +76,25 @@ class MenuScene(Scene):
             self.selected_option = min(self.num_options-1, max(0, self.selected_option))
             self.pointer.setpos(self.pointer.x, 
                                 self.options[0].y + self.font_size * self.selected_option)
-        pygame.time.wait(100)
+        pygame.time.wait(70)
+        
+        if randint(0, 10) == 2:
+            self.snake_up = randint(-1, 1)
+            self.snake_right = randint(-1, 1)
+        if self.snake_up == 0 and self.snake_right == 0:
+            if randint(0, 1) == 0:
+                self.snake_up = 1
+            else:
+                self.snake_right = 1
+        menu_snake.move(self.snake_up, self.snake_right)
 
     def clear_screen(self, screen):
         dirtyrects.clear()
+        self.group_snake.clear(screen, self.background)
         self.group.clear(screen, self.background)
 
     def draw(self, screen):
+        self.group_snake.draw(screen)
         self.group.draw(screen)
         pygame.display.update(dirtyrects)
        
