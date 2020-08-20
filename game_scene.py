@@ -91,7 +91,8 @@ class GameScene(Scene):
         parts = [head, neck, body, tail]
         
         self.snake = Snake(parts, speed=level['game_speed'],
-                           wrap_around=level.get('wrap_around', glb.SNAKE_CAN_WRAP_AROUND))
+                           wrap_around=level.get('wrap_around', glb.SNAKE_CAN_WRAP_AROUND),
+                           bounding_rect=glb.GAMEGRIDRECT)
         self.group_snake = Group([self.snake])
 
         for part in self.snake.parts:

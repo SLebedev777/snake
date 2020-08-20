@@ -41,7 +41,7 @@ class Snake:
     Player
     """
     def __init__(self, parts, speed=glb.SNAKE_PART_WIDTH, max_health=100,
-                 wrap_around=False):
+                 wrap_around=False, bounding_rect=glb.GAMEGRIDRECT):
         self.parts = parts
         self.speed = speed
         self.within_world = True
@@ -52,6 +52,7 @@ class Snake:
         self.health = max_health
         self.vel = [0, 0]
         self.wrap_around = wrap_around
+        self.bounding_rect = bounding_rect
 
     def move(self, up, right, walls=[]):
         head_shift_x, head_shift_y = 0, 0
@@ -108,7 +109,7 @@ class Snake:
         if new_direction != glb.DIRECTION_NONE:
             # try to move the head and check if head goes outside the game world
             head_new_rect = self.head.rect.move(head_shift_x, head_shift_y)
-            if not self.wrap_around and not glb.GAMEGRIDRECT.inflate(2*self.speed, 2*self.speed).contains(head_new_rect):
+            if not self.wrap_around and not self.bounding_rect.inflate(2*self.speed, 2*self.speed).contains(head_new_rect):
                 self.within_world = False
                 self.vel = [0, 0]
                 return False
@@ -123,14 +124,14 @@ class Snake:
             hpx, hpy = self.head.getpos()
             
             if self.wrap_around:
-                if head_new_rect.top < glb.GAMEGRIDRECT.top:
-                    hpy = glb.GAMEGRIDRECT.bottom
-                if head_new_rect.bottom > glb.GAMEGRIDRECT.bottom:
-                    hpy = glb.GAMEGRIDRECT.top - glb.CELL_SIZE
-                if head_new_rect.left < glb.GAMEGRIDRECT.left:
-                    hpx = glb.GAMEGRIDRECT.right
-                if head_new_rect.right > glb.GAMEGRIDRECT.right:
-                    hpx = glb.GAMEGRIDRECT.left - glb.CELL_SIZE
+                if head_new_rect.top < self.bounding_rect.top:
+                    hpy = self.bounding_rect.bottom
+                if head_new_rect.bottom > self.bounding_rect.bottom:
+                    hpy = self.bounding_rect.top - glb.CELL_SIZE
+                if head_new_rect.left < self.bounding_rect.left:
+                    hpx = self.bounding_rect.right
+                if head_new_rect.right > self.bounding_rect.right:
+                    hpx = self.bounding_rect.left - glb.CELL_SIZE
 
             fin_shift_x = 0
             fin_shift_y = 0
@@ -244,7 +245,7 @@ class Snake:
             new_x = tail.rect.x + tail_shifts[d][0]
             new_y = tail.rect.y + tail_shifts[d][1]
             tail.setpos(new_x, new_y)
-            if not glb.GAMEGRIDRECT.contains(tail.rect):
+            if not self.bounding_rect.contains(tail.rect):
                 continue
             if grid.cell_occupied(*grid.xy2cell(new_x, new_y)):
                 continue
